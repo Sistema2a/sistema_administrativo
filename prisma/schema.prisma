@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model loan_customers {
+  loan_customers_id    Int                   @id @default(autoincrement())
+  name                 String
+  lastname             String
+  telephone            String
+  ci                   String                @unique
+  direction            String
+  email                String
+  photo                String?
+  loan                 loans[]
+  debt_total_customers debt_total_customers?
+  create_at            DateTime              @default(now())
+  update_at            DateTime              @updatedAt
+}
+
+model loan_months {
+  month_id  Int      @id @default(autoincrement())
+  num_month Int
+  age       Int
+  create_at DateTime @default(now())
+  update_at DateTime @updatedAt
+}
+
+model loans {
+  loan_id           Int            @id @default(autoincrement())
+  loan              Decimal
+  percentage        Int
+  revenue           Decimal
+  date              DateTime
+  status            String         @default("pending")
+  loan_customers    loan_customers @relation(fields: [loan_customers_id], references: [loan_customers_id])
+  loan_customers_id Int
+  loan_revenue      loan_revenue[]
+  create_at         DateTime       @default(now())
+  update_at         DateTime       @updatedAt
+}
+
+model loan_revenue {
+  revenue_id   Int      @id @default(autoincrement())
+  debt_revenue Decimal
+  num_month    Int
+  age          Int
+  date         DateTime
+  status       String   @default("pending")
+  loans        loans    @relation(fields: [loan_id], references: [loan_id])
+  loan_id      Int
+  create_at    DateTime @default(now())
+  update_at    DateTime @updatedAt
+}
+
+model debt_total_customers {
+  debt_id           Int            @id @default(autoincrement())
+  debt_total        Decimal
+  loan_customers    loan_customers @relation(fields: [loan_customers_id], references: [loan_customers_id])
+  loan_customers_id Int            @unique
+  create_at         DateTime       @default(now())
+  update_at         DateTime       @updatedAt
+}
