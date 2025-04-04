@@ -1,15 +1,52 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import axios from "axios";
 const prisma = new PrismaClient();
 
 export const GET = async () => {
   try {
     console.log("prisma");
-    const loan_customers = await prisma.loan_customers.findMany();
+    const loan_customers = await prisma.loan_customers.findMany({
+      include: {
+        loan: {
+          include: {
+            loan_revenue: {
+              orderBy: {
+                date: "desc",
+              },
+              take: 1,
+            },
+          },
+        },
+        debt_total_customers: true,
+      },
+    });
 
-    console.log(loan_customers);
+    const loans = await prisma.loans.findMany({
+      include: {
+        loan_customers: true,
+        loan_revenue: {
+          orderBy: {
+            date: "desc",
+          },
+          take: 1,
+        },
+      },
+    });
 
-    return NextResponse.json(loan_customers);
+    const loan_revenues = await prisma.loan_revenue.findMany({
+      include: {
+        loans: {
+          include: {
+            loan_customers: true,
+          },
+        },
+      },
+    });
+
+    console.log(loan_revenues);
+
+    return NextResponse.json(loan_revenues);
   } catch (error) {
     return NextResponse.json(
       {
@@ -79,7 +116,37 @@ export const POST = async (req, res) => {
       },
     });
 
-    console.log(add_customer);
+    const cash = await axios.post(
+      `http://localhost:3000/api/cash_register`,
+      {
+        description: `Prestamo a ${name} ${lastname}`,
+        cash: -parseFloat(loan),
+        date: date,
+        concept: "Prestamo",
+      }
+    );
+    console.log("Cash  " + cash);
+    /*
+    const cash_register = await prisma.cash_register.create({
+      data: {
+        description: `Prestamo a ${name} ${lastname}`,
+        cash: loan,
+        date: loan_date,
+        concept: "Prestamo",
+      },
+    });
+
+    const cash_principal = await prisma.cash_principal.update({
+      where: {
+        cash_id: 1,
+      },
+      data: {
+        cash_total: {
+          increment: -loan,
+        },
+      },
+    });*/
+
 
     return NextResponse.json(add_customer);
   } catch (error) {

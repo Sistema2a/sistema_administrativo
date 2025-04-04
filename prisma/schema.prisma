@@ -71,3 +71,29 @@ model debt_total_customers {
   create_at         DateTime       @default(now())
   update_at         DateTime       @updatedAt
 }
+
+model cash_principal {
+  cash_id    Int      @id
+  cash_total Decimal
+  create_at  DateTime @default(now())
+  update_at  DateTime @updatedAt
+}
+
+model cash_register {
+  cash_register_id Int      @id @default(autoincrement())
+  description      String
+  cash             Decimal
+  date             DateTime
+  concept          String
+  create_at        DateTime @default(now())
+  update_at        DateTime @updatedAt
+}
+
+model debt_sistema {
+  debt_sistema_id  Int      @id @default(autoincrement())
+  debt_responsable String
+  debt             Decimal
+  description      String
+  create_at        DateTime @default(now())
+  update_at        DateTime @updatedAt
+}
