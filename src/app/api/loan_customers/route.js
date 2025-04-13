@@ -1,3 +1,4 @@
+import {Temporal} from "temporal-polyfill"
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
@@ -80,6 +81,7 @@ export const POST = async (req, res) => {
 
     let revenue = loan * (percentage / 100);
     let loan_date = new Date(date);
+    //let loan_date = Temporal.PlainDateTime.from(date).toString();
     let num_month = loan_date.getMonth();
     let age = loan_date.getFullYear();
     let debt_total = loan + revenue;
@@ -121,7 +123,7 @@ export const POST = async (req, res) => {
       {
         description: `Prestamo a ${name} ${lastname}`,
         cash: -parseFloat(loan),
-        date: date,
+        date: loan_date,
         concept: "Prestamo",
       }
     );

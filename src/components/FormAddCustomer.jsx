@@ -13,6 +13,7 @@ const FormAddCustomer = () => {
     reset,
   } = useForm();
   const onSubmit = handleSubmit(async (data) => {
+    console.log("data",data)
     const res = await axios.post("/api/loan_customers", data);
     // const resJSON =await res.json();
     console.log(res);
@@ -53,15 +54,15 @@ const FormAddCustomer = () => {
             "
             placeholder="Apellido"
             {...register("lastname", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                },
-                minLength: {
-                  value: 2,
-                  message: "El nombre debe tener mínimo 2 caracteres",
-                },
-              })}
+              required: {
+                value: true,
+                message: "Campo requerido",
+              },
+              minLength: {
+                value: 2,
+                message: "El nombre debe tener mínimo 2 caracteres",
+              },
+            })}
           />
         </div>
         <input
@@ -154,11 +155,11 @@ const FormAddCustomer = () => {
             w-[30%]
             "
             {...register("loan", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                }
-              })}
+              required: {
+                value: true,
+                message: "Campo requerido",
+              },
+            })}
           />
           $
         </label>
@@ -173,11 +174,11 @@ const FormAddCustomer = () => {
             w-[30%]
             "
             {...register("percentage", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                }
-              })}
+              required: {
+                value: true,
+                message: "Campo requerido",
+              },
+            })}
           />
           %
         </label>
@@ -187,16 +188,16 @@ const FormAddCustomer = () => {
         >
           Fecha del Préstamo:
           <input
-            type="date"
+            type="datetime-local"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
             w-[40%]
             "
             {...register("date", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                },
-              })}
+              required: {
+                value: true,
+                message: "Campo requerido",
+              },
+            })}
           />
         </label>
         <button

@@ -97,3 +97,14 @@ model debt_sistema {
   create_at        DateTime @default(now())
   update_at        DateTime @updatedAt
 }
+
+model payment_loan {
+  payment_id      Int      @id @default(autoincrement())
+  payment_amount  Decimal
+  payment_date    DateTime
+  concept         String
+  loan_revenue_id Int?
+  loan_id        Int?
+  create_at       DateTime @default(now())
+  update_at       DateTime @updatedAt
+}

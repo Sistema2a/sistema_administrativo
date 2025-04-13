@@ -1,10 +1,11 @@
+import { Temporal } from "temporal-polyfill";
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const GET = async () => {
   try {
-    const cash_register = await prisma.cash_register.findMany({});
+    let cash_register = await prisma.cash_register.findMany({});
 
     return NextResponse.json(cash_register);
   } catch (error) {
@@ -26,11 +27,9 @@ export const POST = async (req) => {
 
     let { description, cash, date, concept } = data;
 
-    console.log(typeof description, typeof cash, typeof date, typeof concept);
-
+    cash = Number(cash);
     date = new Date(date);
 
-    console.log(typeof description, typeof cash, typeof date, typeof concept);
 
     const cash_register = await prisma.cash_register.create({
       data: {
@@ -41,7 +40,6 @@ export const POST = async (req) => {
       },
     });
 
-    console.log("Cash Register: " + cash_register);
 
     const cash_principal = await prisma.cash_principal.update({
       where: {
@@ -54,7 +52,6 @@ export const POST = async (req) => {
       },
     });
 
-    console.log("Cash Principal: " + cash_register);
 
     return NextResponse.json(cash_register);
   } catch (error) {
