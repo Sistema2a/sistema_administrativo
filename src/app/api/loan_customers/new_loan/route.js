@@ -14,7 +14,9 @@ export const POST = async (req) => {
     id = parseInt(id);
     let revenue = loan * (percentage / 100);
     date = new Date(date);
-    let num_month = date.getMonth() + 1;
+    //let num_month = date.getMonth() + 1;
+    let month = date.toLocaleDateString("es-VE",{month:"long"});
+
     let age = date.getYear();
 
     const new_loan = await prisma.loans.create({
@@ -27,7 +29,7 @@ export const POST = async (req) => {
         loan_revenue: {
           create: {
             debt_revenue: revenue,
-            num_month,
+            month,
             age,
             date,
           },
@@ -42,7 +44,7 @@ export const POST = async (req) => {
       concept: "Prestamo",
     });
 
-    return NextResponse.json("new loan");
+    return NextResponse.json(new_loan);
   } catch (error) {
     return NextResponse.json(
       {

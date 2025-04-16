@@ -5,7 +5,11 @@ const prisma = new PrismaClient();
 
 export const GET = async () => {
   try {
-    let cash_register = await prisma.cash_register.findMany({});
+    let cash_register = await prisma.cash_register.findMany({
+      orderBy: {
+        date: "desc",
+      },
+    });
 
     return NextResponse.json(cash_register);
   } catch (error) {

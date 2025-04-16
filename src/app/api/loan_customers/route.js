@@ -82,7 +82,7 @@ export const POST = async (req, res) => {
     let revenue = loan * (percentage / 100);
     let loan_date = new Date(date);
     //let loan_date = Temporal.PlainDateTime.from(date).toString();
-    let num_month = loan_date.getMonth();
+    let month = loan_date.toLocaleDateString("es-VE",{month:"long"});
     let age = loan_date.getFullYear();
     let debt_total = loan + revenue;
 
@@ -103,7 +103,7 @@ export const POST = async (req, res) => {
             loan_revenue: {
               create: {
                 debt_revenue: revenue,
-                num_month,
+                month,
                 age,
                 date: loan_date,
               },

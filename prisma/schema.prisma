@@ -53,7 +53,7 @@ model loans {
 model loan_revenue {
   revenue_id   Int      @id @default(autoincrement())
   debt_revenue Decimal
-  num_month    Int
+  month        String @default("")
   age          Int
   date         DateTime
   status       String   @default("pending")
@@ -104,7 +104,7 @@ model payment_loan {
   payment_date    DateTime
   concept         String
   loan_revenue_id Int?
-  loan_id        Int?
+  loan_id         Int?
   create_at       DateTime @default(now())
   update_at       DateTime @updatedAt
 }

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
+import FormPaymentLoan from "./FormPaymentLoan";
 
 const LoanSelector = ({ loans }) => {
   const [selectedLoan, setSelectedLoan] = useState(null);
@@ -59,7 +60,7 @@ const LoanSelector = ({ loans }) => {
                   {selectedLoan.status}
                 </th>
                 <th className="border border-gray-300 px-4 py-2">
-                  <button>Pagar</button>
+                <FormPaymentLoan id={selectedLoan.loan_id} />
                 </th>
                 <th className="border border-gray-300 px-4 py-2">
                   <button onClick={() => extenderLoan(selectedLoan.loan_id)}>Extender</button>
@@ -70,7 +71,7 @@ const LoanSelector = ({ loans }) => {
               {selectedLoan.loan_revenue.map((revenue) => (
                 <tr key={revenue.revenue_id} className="hover:bg-gray-50">
                   <td className="border border-gray-300 px-4 py-2">
-                    {revenue.loan_id}
+                    {revenue.revenue_id}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {revenue.debt_revenue}$
@@ -86,7 +87,7 @@ const LoanSelector = ({ loans }) => {
                     {revenue.status}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    <button>Pagar</button>
+                    <FormPaymentLoan id={revenue.revenue_id} />
                   </td>
                 </tr>
               ))}

@@ -3,6 +3,8 @@ import {
   useReactTable,
   getCoreRowModel,
   flexRender,
+  getPaginationRowModel,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -50,6 +52,10 @@ const TableData = () => {
       accessorFn: (row) => row.debt_revenue + "$",
     },
     {
+      header: "Mes",
+      accessorKey: "month",
+    },
+    {
       header: "Fecha",
       accessorKey: "date",
       cell: (info) => dayjs(info.getValue()).format("DD/MM/YYYY"),
@@ -62,10 +68,24 @@ const TableData = () => {
     },
   ];
 
+  const actual_month = new Date().toLocaleDateString("es-VE", { month: "long" });
+
+  const [filtering, setFiltering] = useState(actual_month);
   const table = useReactTable({
     data: customers,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 5, // Configura 5 filas por página
+      },
+    },
+    state: {
+      globalFilter: filtering,
+    },
+    onGlobalFilterChange: setFiltering,
   });
 
   return (
@@ -77,10 +97,25 @@ const TableData = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse border border-gray-300">
+            <div className="mb-4 flex justify-between items-center">
+              <input
+                type="text"
+                value={filtering}
+                onChange={(e) => setFiltering(e.target.value)}
+                placeholder="Buscar..."
+                className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <span className="text-gray-600">
+                Total registros: {customers.length}
+              </span>
+            </div>
+            <table className="min-w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
               <thead>
                 {table.getHeaderGroups().map((headerGroup, index) => (
-                  <tr className="bg-gray-200 text-gray-700" key={index}>
+                  <tr
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                    key={index}
+                  >
                     {headerGroup.headers.map((header, i) => (
                       <th
                         key={i}
@@ -112,7 +147,7 @@ const TableData = () => {
                       </td>
                     ))}
                     <td className="px-4 py-2 border border-gray-300">
-                      <FormPaymentLoan loan_revenue={row.original} />
+                      <FormPaymentLoan id={row.original.revenue_id} />
                     </td>
                     <td className="px-4 py-2 border border-gray-300">
                       <Link
@@ -126,6 +161,42 @@ const TableData = () => {
                 ))}
               </tbody>
             </table>
+
+            {/* Paginación */}
+            <div className="flex justify-between items-center mt-4">
+              <button
+                onClick={() => table.setPageIndex(0)}
+                disabled={!table.getCanPreviousPage()}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-300"
+              >
+                Primera Página
+              </button>
+              <button
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-300"
+              >
+                Página Anterior
+              </button>
+              <span className="text-gray-700">
+                Página {table.getState().pagination.pageIndex + 1} de{" "}
+                {table.getPageCount()}
+              </span>
+              <button
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-300"
+              >
+                Página Siguiente
+              </button>
+              <button
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                disabled={!table.getCanNextPage()}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-300"
+              >
+                Última Página
+              </button>
+            </div>
           </div>
         )}
       </div>

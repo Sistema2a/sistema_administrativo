@@ -58,11 +58,12 @@ export const POST = async (request, { params }) => {
 
     let new_date = last_loan_revenue.date;
     new_date.setMonth(new_date.getMonth() + 1);
+    let month = new_date.toLocaleDateString("es-VE", {month:"long"})
 
     const new_loan_revenue = await prisma.loan_revenue.create({
       data: {
         debt_revenue: last_loan_revenue.debt_revenue,
-        num_month: last_loan_revenue.num_month,
+        month,
         age: last_loan_revenue.age,
         date: new_date,
         loan_id: last_loan_revenue.loan_id,

@@ -4,10 +4,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
-const FormPaymentLoan = ({ id }) => {
+const FormAddTransaction = () => {
   const router = useRouter();
-
-  console.log(id);
 
   const [showForm, setShowForm] = useState(false);
 
@@ -18,10 +16,9 @@ const FormPaymentLoan = ({ id }) => {
   } = useForm();
 
   const onSubmit = handleSubmit(async (data) => {
-    data.id = id;
     console.log(data);
-
-    const res = await axios.post("/api/payments", data);
+    data.cash = -data.cash
+    const res = await axios.post("/api/cash_register", data);
 
     if (res.status == 200) router.push("/dashboard");
   });
@@ -32,7 +29,7 @@ const FormPaymentLoan = ({ id }) => {
         className="bg-black text-yellow-600 px-[1rem] py-[.5rem]"
         onClick={() => setShowForm(true)}
       >
-        Pagar
+        Ingresar Transacción
       </button>
 
       {showForm && (
@@ -45,65 +42,63 @@ const FormPaymentLoan = ({ id }) => {
               ✕
             </button>
             <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-              Agregar Pago de Préstamo
+              Agregar Transacción
             </h2>
 
             <form onSubmit={onSubmit} className="space-y-6">
-              {/* Campo Monto */}
+              
               <div>
                 <label
-                  htmlFor="amount"
+                  htmlFor="description"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Monto
+                  Descripción
                 </label>
                 <div className="relative mt-1">
                   <input
-                    type="number"
-                    id="payment"
-                    {...register("payment", {
-                      required: "El monto es obligatorio",
+                    type="text"
+                    id="description"
+                    {...register("description", {
+                      required: "La descripción es obligatoria",
                     })}
                     className="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Ingrese el monto"
+                    placeholder="Ingrese una descripción"
                   />
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                     $
                   </span>
                 </div>
-                {errors.payment && (
+                {errors.description && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.payment.message}
+                    {errors.description.message}
                   </p>
                 )}
               </div>
 
               <div>
                 <label
-                  htmlFor="percentage"
+                  htmlFor="cash"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Concepto
+                  Monto
                 </label>
                 <div className="relative mt-1">
-                  <select
-                    id="concept"
-                    {...register("concept", {
-                      required: "El concepto es obligatorio",
-                      validate: value => value!=""
+                  <input
+                    type="text"
+                    id="cash"
+                    {...register("cash", {
+                      required: "El monto es obligatoria",
                     })}
-                    className="block w-full pl-4 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  >
-
-                    <option value="capital_prestamo">
-                      Pago de capital de Préstamo
-                    </option>
-                    <option value="interes_prestamo">Pago de interés</option>
-                  </select>
+                    className="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="Ingrese un monto"
+                  />
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                    $
+                  </span>
                 </div>
-                {errors.concept && (
+                {errors.cash && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.concept.message}
+                    {errors.cash.message}
                   </p>
                 )}
               </div>
@@ -129,6 +124,27 @@ const FormPaymentLoan = ({ id }) => {
                 )}
               </div>
 
+              <div>
+                <label
+                  htmlFor="concept"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Concepto
+                </label>
+                <div className="relative mt-1">
+                  <input type="text" 
+                    id="concept"
+                    className="mt-1 block w-full pl-4 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    {...register("concept", {required: "El concepto es obligatorio"})}
+                  />
+                </div>
+                {errors.concept && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.concept.message}
+                  </p>
+                )}
+              </div>
+
               {/* Botón Enviar */}
               <button
                 type="submit"
@@ -144,4 +160,4 @@ const FormPaymentLoan = ({ id }) => {
   );
 };
 
-export default FormPaymentLoan;
+export default FormAddTransaction;
