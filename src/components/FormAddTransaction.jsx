@@ -17,7 +17,6 @@ const FormAddTransaction = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     console.log(data);
-    data.cash = -data.cash
     const res = await axios.post("/api/cash_register", data);
 
     if (res.status == 200) router.push("/dashboard");
@@ -132,11 +131,25 @@ const FormAddTransaction = () => {
                   Concepto
                 </label>
                 <div className="relative mt-1">
-                  <input type="text" 
+                <select
                     id="concept"
-                    className="mt-1 block w-full pl-4 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    {...register("concept", {required: "El concepto es obligatorio"})}
-                  />
+                    {...register("concept", {
+                      required: "El concepto es obligatorio",
+                      validate: value => value!=""
+                    })}
+                    className="block w-full pl-4 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+
+                    <option value="Pago de capital de prestamo">
+                      Pago de capital de Préstamo
+                    </option>
+                    <option value="Pago de interes de prestamo">Pago de interés</option>
+                    <option value="Gasto personal">Gasto Personal</option>
+                    <option value="Cuenta por pagar">Cuenta por cobrar</option>
+                    <option value="Pago cuenta por pagar">Pago cuenta por cobrar</option>
+                    <option value="Capital de Inversor">Capital de Inversor</option>
+                    <option value="otro">Otro</option>
+                  </select>
                 </div>
                 {errors.concept && (
                   <p className="text-red-500 text-sm mt-1">

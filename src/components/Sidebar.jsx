@@ -1,9 +1,28 @@
-import { FaAddressBook, FaListUl, FaMoneyBill } from "react-icons/fa";
-import { MdBusinessCenter, MdAccountBalance } from "react-icons/md";
+import { useState } from "react";
+import {
+  FaAddressBook,
+  FaListUl,
+  FaMoneyBill,
+  FaHistory,
+} from "react-icons/fa";
+import { MdBusinessCenter, MdAccountBalance, MdPayments } from "react-icons/md";
 import { IoPersonSharp } from "react-icons/io5";
 import Link from "next/link";
 
 const Sidebar = () => {
+  const [menuStates, setMenuStates] = useState({
+    investors: false,
+    loans: false,
+    accounts: false,
+  });
+
+  const toggleMenu = (menu) => {
+    setMenuStates((prev) => ({
+      ...prev,
+      [menu]: !prev[menu],
+    }));
+  };
+
   return (
     <aside
       id="default-sidebar"
@@ -32,59 +51,130 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link
-              href="/dashboard/pages/loans_table"
-              className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+            <button
+              onClick={() => toggleMenu("loans")}
+              className="flex items-center w-full p-3 rounded-lg hover:bg-gray-700 transition duration-200"
             >
-              <FaListUl className="w-6 h-6 text-gray-400 group-hover:text-white" />
-              <span className="ml-4">Tabla de Préstamos</span>
-            </Link>
+              <MdPayments className="w-6 h-6 text-gray-400 group-hover:text-white" />
+              <span className="ml-4 flex-1 text-left">Préstamos</span>
+              <span className="text-sm">{menuStates.loans ? "▲" : "▼"}</span>
+            </button>
+            {menuStates.loans && (
+              <ul className="mt-2 space-y-2 pl-8">
+                <li>
+                  <Link
+                    href="/dashboard/pages/addcustomer"
+                    className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+                  >
+                    <FaAddressBook className="w-3 h-3 text-gray-400 group-hover:text-white" />
+                    <span className="ml-4">Agregar Cliente</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/dashboard/pages/loans_table"
+                    className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+                  >
+                    <FaListUl className="w-3 h-3 text-gray-400 group-hover:text-white" />
+                    <span className="ml-4">Tabla de Préstamos</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+                  >
+                    <FaHistory className="w-3 h-3 text-gray-400 group-hover:text-white" />
+                    <span className="ml-4">Historial de Clientes</span>
+                  </Link>
+                </li>
+              </ul>
+            )}
           </li>
+
+          {/* Inversionistas con Submenú */}
           <li>
-            <Link
-              href="/dashboard/pages/addtypecustomer"
-              className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
-            >
-              <FaAddressBook className="w-6 h-6 text-gray-400 group-hover:text-white" />
-              <span className="ml-4">Agregar Cliente</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/dashboard/pages/caja"
-              className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
-            >
-              <MdBusinessCenter className="w-6 h-6 text-gray-400 group-hover:text-white" />
-              <span className="ml-4">CAJA</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/dashboard/pages/customers"
-              className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
-            >
-              <IoPersonSharp className="w-6 h-6 text-gray-400 group-hover:text-white" />
-              <span className="ml-4">Clientes</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="#"
-              className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
-            >
-              <MdAccountBalance className="w-6 h-6 text-gray-400 group-hover:text-white" />
-              <span className="ml-4">Cuentas</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="#"
-              className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+            <button
+              onClick={() => toggleMenu("investors")}
+              className="flex items-center w-full p-3 rounded-lg hover:bg-gray-700 transition duration-200"
             >
               <FaMoneyBill className="w-6 h-6 text-gray-400 group-hover:text-white" />
-              <span className="ml-4">Inversionistas</span>
-            </Link>
+              <span className="ml-4 flex-1 text-left">Inversionistas</span>
+              <span className="text-sm">
+                {menuStates.investors ? "▲" : "▼"}
+              </span>
+            </button>
+            {menuStates.investors && (
+              <ul className="mt-2 space-y-2 pl-8">
+                <li>
+                  <Link
+                    href="#"
+                    className="block p-2 rounded-lg hover:bg-gray-700 transition duration-200"
+                  >
+                    Agregar Inversor
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="block p-2 rounded-lg hover:bg-gray-700 transition duration-200"
+                  >
+                    Tabla de Inversores
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="block p-2 rounded-lg hover:bg-gray-700 transition duration-200"
+                  >
+                    Historial de Inversores
+                  </Link>
+                </li>
+              </ul>
+            )}
           </li>
+          <li>
+            <button
+              onClick={() => toggleMenu("accounts")}
+              className="flex items-center w-full p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+            >
+              <MdAccountBalance className="w-6 h-6 text-gray-400 group-hover:text-white" />
+              <span className="ml-4 flex-1 text-left">Cuentas</span>
+              <span className="text-sm">{menuStates.accounts ? "▲" : "▼"}</span>
+            </button>
+            {menuStates.accounts && (
+              <ul className="mt-2 space-y-2 pl-8">
+                <li>
+                  <Link
+                    href="#"
+                    className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+                  >
+                    <FaAddressBook className="w-3 h-3 text-gray-400 group-hover:text-white" />
+                    <span className="ml-4">Cuentas por Pagar</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+                  >
+                    <FaListUl className="w-3 h-3 text-gray-400 group-hover:text-white" />
+                    <span className="ml-4">Cuentas por Cobrar</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/dashboard/pages/caja"
+                    className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+                  >
+                    <MdBusinessCenter className="w-6 h-6 text-gray-400 group-hover:text-white" />
+                    <span className="ml-4">CAJA</span>
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+
         </ul>
       </div>
     </aside>

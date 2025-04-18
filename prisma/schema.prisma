@@ -53,7 +53,7 @@ model loans {
 model loan_revenue {
   revenue_id   Int      @id @default(autoincrement())
   debt_revenue Decimal
-  month        String @default("")
+  month        String   @default("")
   age          Int
   date         DateTime
   status       String   @default("pending")
@@ -90,12 +90,24 @@ model cash_register {
 }
 
 model debt_sistema {
-  debt_sistema_id  Int      @id @default(autoincrement())
-  debt_responsable String
-  debt             Decimal
-  description      String
-  create_at        DateTime @default(now())
-  update_at        DateTime @updatedAt
+  debt_sistema_id      Int                   @id @default(autoincrement())
+  responsable          String
+  debt_total           Decimal
+  date                 DateTime
+  history_debt_sistema history_debt_sistema[]
+  create_at            DateTime              @default(now())
+  update_at            DateTime              @updatedAt
+}
+
+model history_debt_sistema {
+  history_debt_sistema_id Int          @id @default(autoincrement())
+  amount                  Decimal
+  concept                 String
+  date                    DateTime
+  debt_sistema            debt_sistema @relation(fields: [debt_sistema_id], references: [debt_sistema_id])
+  debt_sistema_id         Int
+  create_at               DateTime     @default(now())
+  update_at               DateTime     @updatedAt
 }
 
 model payment_loan {
