@@ -33,30 +33,6 @@ export const POST = async (req) => {
     cash = parseFloat(cash);
     date = new Date(date);
 
-    console.log(data);
-
-    if (concept == "Cuenta por pagar") {
-      const new_debt_sistema = await prisma.debt_sistema.create({
-        data: {
-          name: description,
-          debt: cash,
-          description: concept,
-          date,
-        },
-      });
-    }
-
-    if (concept == "Pago cuenta por pagar") {
-      const new_debt_sistema = await prisma.debt_sistema.create({
-        data: {
-          responsable: description,
-          debt: cash,
-          concept,
-          date,
-        },
-      });
-    }
-
     const cash_register = await prisma.cash_register.create({
       data: {
         description,

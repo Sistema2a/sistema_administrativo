@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Tabla para almacenar los clientes de prestamos
 model loan_customers {
   loan_customers_id    Int                   @id @default(autoincrement())
   name                 String
@@ -36,6 +37,7 @@ model loan_months {
   update_at DateTime @updatedAt
 }
 
+// Tablas para almacenar los prestamos y sus ingresos
 model loans {
   loan_id           Int            @id @default(autoincrement())
   loan              Decimal
@@ -63,6 +65,19 @@ model loan_revenue {
   update_at    DateTime @updatedAt
 }
 
+// Tabla para almacenar los pagos de los prestamos
+model payment_loan {
+  payment_id      Int      @id @default(autoincrement())
+  payment_amount  Decimal
+  payment_date    DateTime
+  concept         String
+  loan_revenue_id Int?
+  loan_id         Int?
+  create_at       DateTime @default(now())
+  update_at       DateTime @updatedAt
+}
+
+// Tabla para almacenar la deuda total de los clientes
 model debt_total_customers {
   debt_id           Int            @id @default(autoincrement())
   debt_total        Decimal
@@ -72,6 +87,7 @@ model debt_total_customers {
   update_at         DateTime       @updatedAt
 }
 
+// Tabla para almacenar el dinero ingresado y egresado del sistema
 model cash_principal {
   cash_id    Int      @id
   cash_total Decimal
@@ -89,34 +105,43 @@ model cash_register {
   update_at        DateTime @updatedAt
 }
 
-model debt_sistema {
-  debt_sistema_id      Int                   @id @default(autoincrement())
-  responsable          String
+//Tablas relacionadas a la deuda del sistema
+model users_debt_sistema {
+  user_debt_sistema_id Int                    @id @default(autoincrement())
+  user                 String
   debt_total           Decimal
-  date                 DateTime
   history_debt_sistema history_debt_sistema[]
-  create_at            DateTime              @default(now())
-  update_at            DateTime              @updatedAt
+  create_at            DateTime               @default(now())
+  update_at            DateTime               @updatedAt
 }
 
 model history_debt_sistema {
-  history_debt_sistema_id Int          @id @default(autoincrement())
+  history_debt_sistema_id Int                @id @default(autoincrement())
   amount                  Decimal
   concept                 String
   date                    DateTime
-  debt_sistema            debt_sistema @relation(fields: [debt_sistema_id], references: [debt_sistema_id])
-  debt_sistema_id         Int
-  create_at               DateTime     @default(now())
-  update_at               DateTime     @updatedAt
+  users_debt_sistema      users_debt_sistema @relation(fields: [user_debt_sistema_id], references: [user_debt_sistema_id])
+  user_debt_sistema_id    Int
+  create_at               DateTime           @default(now())
+  update_at               DateTime           @updatedAt
 }
 
-model payment_loan {
-  payment_id      Int      @id @default(autoincrement())
-  payment_amount  Decimal
-  payment_date    DateTime
-  concept         String
-  loan_revenue_id Int?
-  loan_id         Int?
-  create_at       DateTime @default(now())
-  update_at       DateTime @updatedAt
+model users_account_receivable {
+  users_account_receivable_id Int                          @id @default(autoincrement())
+  account                        String
+  debt_total                  Decimal
+  history_account_receivable  history_account_receivable[]
+  create_at                   DateTime                     @default(now())
+  update_at                   DateTime                     @updatedAt
+}
+
+model history_account_receivable {
+  history_debt_sistema_id     Int                @id @default(autoincrement())
+  amount                      Decimal
+  concept                     String
+  date                        DateTime
+  users_account_receivable          users_account_receivable @relation(fields: [users_account_receivable_id], references: [users_account_receivable_id])
+  users_account_receivable_id Int
+  create_at                   DateTime           @default(now())
+  update_at                   DateTime           @updatedAt
 }

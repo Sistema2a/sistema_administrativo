@@ -1,7 +1,11 @@
-import {Temporal} from "temporal-polyfill"
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { writeFile } from "fs/promises";
 import axios from "axios";
+
 const prisma = new PrismaClient();
 
 export const GET = async () => {
@@ -60,10 +64,20 @@ export const GET = async () => {
   }
 };
 
-export const POST = async (req, res) => {
-  try {
-    const data = await req.json();
+export const POST = async (req) => {
+  const res = NextResponse.next();
+  //const formData = await req.formData();
 
+  try {
+    const formData = await req.formData();
+    const file = formData.get("contract");
+    console.log("formData", formData);
+
+    const data = {};
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+    console.log("data", data);
     let {
       name,
       lastname,
@@ -71,10 +85,26 @@ export const POST = async (req, res) => {
       ci,
       direction,
       email,
+      contract,
       loan,
       percentage,
       date,
     } = data;
+
+    if (!file) {
+      return NextResponse.json({ success: false });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const filePath = path.join(
+      process.cwd(),
+      "public/contratos/prestamos",
+      `contrato_${name}_${ci}_${date}.pdf`
+    );
+    await writeFile(filePath, buffer);
+    console.log(`open ${filePath} to see the uploaded file`);
 
     loan = parseFloat(loan);
     percentage = parseInt(percentage);
@@ -82,7 +112,7 @@ export const POST = async (req, res) => {
     let revenue = loan * (percentage / 100);
     let loan_date = new Date(date);
     //let loan_date = Temporal.PlainDateTime.from(date).toString();
-    let month = loan_date.toLocaleDateString("es-VE",{month:"long"});
+    let month = loan_date.toLocaleDateString("es-VE", { month: "long" });
     let age = loan_date.getFullYear();
     let debt_total = loan + revenue;
 
@@ -118,15 +148,12 @@ export const POST = async (req, res) => {
       },
     });
 
-    const cash = await axios.post(
-      `http://localhost:3000/api/cash_register`,
-      {
-        description: `Prestamo a ${name} ${lastname}`,
-        cash: -parseFloat(loan),
-        date: loan_date,
-        concept: "Prestamo",
-      }
-    );
+    const cash = await axios.post(`http://localhost:3000/api/cash_register`, {
+      description: `Prestamo a ${name} ${lastname}`,
+      cash: -parseFloat(loan),
+      date: loan_date,
+      concept: "Prestamo",
+    });
     console.log("Cash  " + cash);
     /*
     const cash_register = await prisma.cash_register.create({
@@ -149,8 +176,7 @@ export const POST = async (req, res) => {
       },
     });*/
 
-
-    return NextResponse.json(add_customer);
+    return NextResponse.json("add_customer");
   } catch (error) {
     return NextResponse.json(
       {
